@@ -5,6 +5,20 @@ on:
     branches:
       - lesson-5
 jobs:
+  security_test:
+    needs: [deploy] # normally this would be the function_test job, but we're skipping that step here
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: https://hangryhippo.quantic.host
+      - uses: actions/checkout@v4
+      - name: Install dependencies and run security scan
+        run: npm install && npx snyk test
 #  function_test: (commented out to save learner time)
 #    runs-on: ubuntu-latest
 #    defaults:
